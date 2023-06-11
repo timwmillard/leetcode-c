@@ -3,24 +3,23 @@
 #include <stdlib.h>
 #include <assert.h>
 
-char *mergeAlternately(char *word1, char *word2){
+char *mergeAlternately(char *word1, char *word2) {
     size_t word1_len = strlen(word1);
     size_t word2_len = strlen(word2);
     size_t len = word1_len + word2_len;
     char *result = malloc(sizeof(char) * len + 1);
 
+    int i = 0;
     int i1 = 0;
     int i2 = 0;
-    for (int i = 0; i < len; i++) {
-        if (i % 2 == 0 && i1 < word1_len) {
-            result[i] = word1[i1];
-            i1++;
-        }
-        if (i % 2 != 0 && i2 < word2_len) {
-            result[i] = word2[i2];
-            i2++;
-        }
+    while (i < len) {
+        if (i1 < word1_len)
+            result[i++] = word1[i1++];
+
+        if (i2 < word2_len)
+            result[i++] = word2[i2++];
     }
+    result[len] = '\0';
 
     return result;
 }
