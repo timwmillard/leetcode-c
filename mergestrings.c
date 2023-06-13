@@ -3,7 +3,8 @@
 #include <stdlib.h>
 #include <assert.h>
 
-char *mergeAlternately(char *word1, char *word2) {
+char *mergeAlternately(char *word1, char *word2)
+{
     size_t word1_len = strlen(word1);
     size_t word2_len = strlen(word2);
     size_t len = word1_len + word2_len;
