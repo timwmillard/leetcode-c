@@ -30,28 +30,28 @@ char *gcdOfStrings(char *str1, char *str2) {
     size_t str2_len = strlen(str2);
     size_t len = str1_len + str2_len;
 
-    char *str1str2 = malloc(sizeof(char) * len + 1);
+    char *str1str2 = malloc(sizeof(char) * len + sizeof(char));
     str1str2[0] = '\0';
     str1str2 = strncat(str1str2, str1, str1_len);
     str1str2 = strncat(str1str2, str2, str2_len);
 
-    char *str2str1 = malloc(sizeof(char) * len + 1);
+    char *str2str1 = malloc(sizeof(char) * len + sizeof(char));
     str2str1[0] = '\0';
     str2str1 = strncat(str2str1, str2, str2_len);
     str2str1 = strncat(str2str1, str1, str1_len);
 
-    char *output;
     if (strcmp(str1str2, str2str1) != 0) {
-        output = malloc(sizeof(char));
-        output[0] = '\0';
-        return output;
+        char *empty = malloc(sizeof(char));
+        empty[0] = '\0';
+        return empty;
     }
     free(str1str2);
     free(str2str1);
 
     int gcd_num = gcd(str1_len, str2_len);
-    output = malloc(sizeof(char) * gcd_num);
+    char *output = malloc(sizeof(char) * gcd_num + sizeof(char));
     strncpy(output, str1, gcd_num);
+    output[gcd_num] = '\0';
 
     return output;
 }
