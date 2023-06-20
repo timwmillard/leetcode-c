@@ -1,3 +1,4 @@
+#include <math.h>
 #include <stdio.h>
 #include <stdbool.h>
 #include <stdlib.h>
@@ -69,9 +70,8 @@ int main() {
     for (int i = 0; i < 2; i++) {
         struct test t = tests[i];
 
-        printf("%s: \"%s\" -> ", t.name, t.input);
         char *got = reverseVowels(t.input);
-        printf("\"%s\", expect \"%s\"\n", got, t.output);
+        printf("%s: \"%s\" -> \"%s\", expect \"%s\"\n", t.name, t.input, got, t.output);
         assert(strcmp(got, t.output) == 0);
         free(got);
     }
