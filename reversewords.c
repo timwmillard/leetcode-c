@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
 
 /*
  * Given an input string s, reverse the order of the words.
@@ -24,55 +25,81 @@
  * words. Do not include any extra spaces.
  *
  */
-char *reverseWords(char *s) {
+
+void printString(char *msg, char *s, size_t len) {
+    printf("%s", msg);
+    for (int i = 0; i < len; i++) {
+        if (s[i] == '\0') printf("[Ø] ");
+        else printf("[%c] ", s[i]);
+    }
+    printf("\n");
+}
+
+/* Example 1: "the sky is blue" -> "blue is s */
+/*       [t] [h] [e] [ ] [s] [k] [y] [ ] [i] */ 
+/*       [b] [l] [u] [e] [ ] [i] [s] [ ] [s] */ 
+/* Example 2: "  hello world  " -> "world hel */
+/*       [ ] [ ] [h] [e] [l] [l] [o] [ ] [w] */ 
+/*       [w] [o] [r] [l] [d] [ ] [h] [e] [l] */ 
+/* Example 3: "a good   example" -> "example */ 
+/*       [a] [ ] [g] [o] [o] [d] [ ] [ ] [ ] */ 
+/*       [e] [x] [a] [m] [p] [l] [e] [ ] [g] */ 
+
+
+
+/*
+          
+len = 15
+ptr            + 
+              [0] [1] [2] [3] [4] [5] [6] [7] [8] [9] [10][11][12][13][14][15]
+s             [t] [h] [e] [ ] [s] [k] [y] [ ] [i] [s] [ ] [b] [l] [u] [e]
+result        [b] [l] [u] [e] [ ] [ ] [ ] [ ] [ ] [ ] [ ] [ ] [ ] [ ] [ ] [ ]
+result (act)  [b] [l] [u] [e] [ ] [i] [s] [ ] [s] [k] [y] [ ] [t] [h] [e]
+resultPtr                                                      ^
+inWord = false
+wordLen = 0
+
+*/
+
+char *reverseWords(char *s) 
+{
 
     if (s == NULL || *s == '\0')
         return NULL;
 
     size_t len = strlen(s);
 
-    char *result = malloc(sizeof(char) * len + sizeof(char));
-    char *resultPtr = result;
+    size_t resultlen = len + 1;
+    char *result = malloc(resultlen);
 
-    char *ptr = &s[len - 1]; // start at the end
-    bool inWord = false;
-    int wordLen = 0;
-    while (ptr != s) {
-        if (*ptr != ' ') {
-            // any letter
-            inWord = true;
-            wordLen++;
+    char *nextword = result;
+    int wordlen = 0;
+    for (int i = len - 1; i >= 0; i--) {
+        char *ptr = &s[i];
+        if (isspace(*ptr) && wordlen == 0) {
+            wordlen = 0;
+        } else if (isspace(*ptr) && wordlen > 0) {
+            memcpy(nextword, ptr+1, wordlen);
+            nextword += wordlen;
+            *nextword = ' ';
+            nextword++;
+            wordlen = 0;
+        } else if (!isspace(*ptr)) { // Letter of word
+            wordlen++;
         } else {
-            // space
-            if (inWord) {
-                // copy word to result
-                memcpy(resultPtr, ptr + 1, wordLen);
-                resultPtr += wordLen;
-
-                *resultPtr = ' ';
-                resultPtr++;
-
-                inWord = false;
-                wordLen = 0;
-            }
+            printf("PANIC\n"); // Should not occur
         }
-        ptr--;
     }
-    if (inWord) {
-        memcpy(resultPtr, ptr, wordLen + 1);
-        resultPtr += wordLen + 1;
+    if (wordlen>0) {
+        memcpy(nextword, &s[0], wordlen);
+        nextword += wordlen + 1;
     }
-
-    if (*(resultPtr-1) == ' ')
-        *(resultPtr-1) = '\0';
-    else 
-        *resultPtr = '\0';
+    *(nextword-1) = '\0'; 
 
     return result;
 }
 
 int main() {
-
     struct test {
         char *name;
         char *input;
@@ -85,8 +112,7 @@ int main() {
             .input = "the sky is blue",
             .output = "blue is sky the",
         },
-        // Your reversed string should not contain leading or trailing
-        // spaces.
+        // Your reversed string should not contain leading or trailing spaces.
         {
             .name = "Example 2",
             .input = "  hello world  ",
@@ -102,12 +128,13 @@ int main() {
 
     };
 
-    for (int i = 0; i < sizeof(tests); i++) {
+    int testsCount = sizeof(tests) / sizeof(struct test);
+
+    for (int i = 0; i < testsCount; i++) {
         struct test t = tests[i];
 
         char *got = reverseWords(t.input);
-        printf("%s: \"%s\" -> \"%s\", expect \"%s\"\n", t.name, t.input, got,
-               t.output);
+        printf("%s: \"%s\" -> \"%s\", expect \"%s\"\n", t.name, t.input, got, t.output);
         assert(strcmp(got, t.output) == 0);
         free(got);
     }
