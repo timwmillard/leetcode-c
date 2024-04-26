@@ -33,26 +33,6 @@ Follow up: Can you solve the problem in O(1) extra space complexity? (The output
 #include <stdbool.h>
 
 
-/*
- * numsSize = 4
- * numsSize-1 = 3
- *             0 1 2 3 4
-Input: nums = [1,2,3,4]
-
-1-24, 1-12, 2-4, 6-1
-24, 12, 8, 6
-
-
-0]  pre=1 post=24 anwser=24
-1]  pre=1 post=12 anwser=12
-2]  pre=1 post=4 anwser=4
-3]  pre=2 post=1 anwser=2
-
-
-          0  1 2 3
-Output: [24,12,8,6]
-*/
-
 /**
  * Note: The returned array must be malloced, assume caller calls free().
  */
@@ -63,19 +43,17 @@ int *productExceptSelf(int *nums, int numsSize, int *returnSize)
     int *anwser = malloc(numsSize*sizeof(int));
     *returnSize = numsSize;
 
-    for (int i = 0; i < numsSize; i++) {
-        if (i == 0) {
-            pre[0] = 1;
-        } else {
-            pre[i] = nums[i-1] * pre[i-1];
-        }
+    if (numsSize > 0) {
+        pre[0] = 1;
     }
-    for (int i = numsSize - 1; i >= 0; i--) {
-        if (i == numsSize - 1) {
-            post[numsSize -1] = 1;
-        } else {
-            post[i] = nums[i+1] * post[i+1];
-        }
+    if (numsSize > 1) {
+        post[numsSize-1] = 1;
+    }
+    for (int i = 1; i < numsSize; i++) {
+        pre[i] = nums[i-1] * pre[i-1];
+    }
+    for (int i = numsSize - 2; i >= 0; i--) {
+        post[i] = nums[i+1] * post[i+1];
     }
 
     for (int i = 0; i < numsSize; i++) {
