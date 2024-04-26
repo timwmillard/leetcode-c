@@ -58,24 +58,28 @@ Output: [24,12,8,6]
  */
 int *productExceptSelf(int *nums, int numsSize, int *returnSize) 
 {
+    int *pre = malloc(numsSize*sizeof(int));
+    int *post = malloc(numsSize*sizeof(int));
     int *anwser = malloc(numsSize*sizeof(int));
     *returnSize = numsSize;
 
-    int product = 1;
     for (int i = 0; i < numsSize; i++) {
-        int pre = 1;
-        if (i > 0) {
-            for (int j = 0; j < i; j++) {
-                pre *= nums[j];
-            }
+        if (i == 0) {
+            pre[0] = 1;
+        } else {
+            pre[i] = nums[i-1] * pre[i-1];
         }
-        int post = 1;
-        if (i < numsSize-1) {
-            for (int j = i+1; j < numsSize; j++) {
-                post *= nums[j];
-            }
+    }
+    for (int i = numsSize - 1; i >= 0; i--) {
+        if (i == numsSize - 1) {
+            post[numsSize -1] = 1;
+        } else {
+            post[i] = nums[i+1] * post[i+1];
         }
-        anwser[i] = pre * post;
+    }
+
+    for (int i = 0; i < numsSize; i++) {
+        anwser[i] = pre[i] * post[i];
     }
     return anwser;
 }
@@ -87,6 +91,8 @@ bool intArrayEqual(int *a, int *b, int size)
     }
     return true;
 }
+
+#include "productarrayexpectself_tests.h"
 
 int main() {
     struct test {
@@ -108,6 +114,18 @@ int main() {
             .nums = (int[]){-1,1,0,-3,3},
             .numsSize = 5,
             .returnNums = (int[]){0,0,9,0,0},
+        },
+        {
+            .name = "Example 3",
+            .nums = (int[]){-1,1,1,-1,1},
+            .numsSize = 5,
+            .returnNums = (int[]){-1,1,1,-1,1},
+        },
+        {
+            .name = "Big Test",
+            .nums = (int*)bigTest,
+            .numsSize = sizeof(bigTest) / sizeof(bigTest[0]),
+            .returnNums = (int*)bigTest,
         },
 
     };
@@ -132,8 +150,9 @@ int main() {
         assert(gotSize == t.numsSize);
         assert(intArrayEqual(got, t.returnNums, gotSize));
         free(got);
+
         printf("  ---- PASSED ----\n");
-    }
+    } 
 
     printf("\n***** All test passed ******\n");
 
