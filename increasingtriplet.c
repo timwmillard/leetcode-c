@@ -29,6 +29,7 @@ Follow up: Could you implement a solution that runs in O(n) time complexity and 
 #include <stdio.h>
 #include <stdbool.h>
 #include <assert.h>
+#include <stdlib.h>
 
 /*
 
@@ -61,22 +62,63 @@ i=20,j=100,
 i=100
 i=10,12,13
 
-
-
-
-
  */
+
+typedef struct {
+    int num[2];
+    int len;
+} Triplett;
+
+typedef struct {
+    Triplett *trip;
+    int len;
+    int cap;
+} Stack;
+
+Stack *stack_push(Stack *stack, Triplett trip)
+{
+    size_t mincap = stack->len + 1;
+    if (mincap >= stack->cap) {
+        size_t newcap = mincap * 2;
+        stack->trip = realloc(stack->trip, newcap * sizeof(Triplett));
+        stack->cap = newcap;
+    }
+    stack->trip[stack->len++] = trip;
+    return stack;
+}
 
 bool increasingTriplet(int* nums, int numsSize)
 {
     if (numsSize < 3) return false;
+
+    Stack stack = {0};
     
-    for (int i = 1; i < numsSize-1; i++) {
-        if (nums[i-1] < nums[i] && nums[i] < nums[i+1])
-            return true;
+    for (int i = 0; i < numsSize; i++) {
+        int num = nums[i];
+        for (int j = 0; j < stack.len; j++) {
+            Triplett *trip = &stack.trip[j]; 
+            if (trip->len == 2) {
+                if (trip->num[0] < trip->num[1] && trip->num[1] < num)
+                    return true;
+            } else if (trip->len == 1) {
+                if (trip->num[0] < num) {
+                    Triplett newtrip = *trip;
+                    newtrip.num[1] = num;
+                    newtrip.len++;
+                    stack_push(&stack, newtrip);
+                }
+            }
+        }
+        Triplett newtrip;
+        newtrip.num[0] = num;
+        newtrip.num[1] = 0;
+        newtrip.len = 1;
+        stack_push(&stack, newtrip);
     }
     return false;
 }
+
+#include "increasingtriplet_testdata.h"
 
 int main()
 {
@@ -110,6 +152,18 @@ int main()
             .name = "Example 4",
             .nums = (int[]){20,100,10,12,5,13},
             .numsSize = 6,
+            .anwser = true,
+        },
+        {
+            .name = "Example 5",
+            .nums = (int[]){1,5,0,4,1,3},
+            .numsSize = 6,
+            .anwser = true,
+        },
+        {
+            .name = "Example 6",
+            .nums = (int*)bigTest,
+            .numsSize = sizeof(bigTest) / sizeof(bigTest[0]),
             .anwser = true,
         },
     };
