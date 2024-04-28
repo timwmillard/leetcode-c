@@ -70,7 +70,7 @@ bool intArrayEqual(int *a, int *b, int size)
     return true;
 }
 
-#include "productarrayexpectself_tests.h"
+#include "productarrayexpectself_testdata.h"
 
 int main() {
     struct test {
