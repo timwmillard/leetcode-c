@@ -72,27 +72,13 @@ i=10,12,13
 
 bool increasingTriplet(int* nums, int numsSize)
 {
-    if (numsSize < 3) return false;
-
-    int minTil[numsSize];
-    int maxTil[numsSize];
-
-    int min = INT_MAX;
-    for (int i = 0; i < numsSize; i++) {
-        int num = nums[i];
-        if (num < min) min = num;
-        minTil[i] = min;
-    }
-
-    int max = INT_MIN;
-    for (int i = numsSize-1; i >= 0; i--) {
-        int num = nums[i];
-        if (num > max) max = num;
-        maxTil[i] = max;
-    }
-
-    for (int i = 0; i < numsSize; i++) {
-        if (nums[i] != minTil[i] && nums[i] != maxTil[i]) return true;
+    int i = INT_MAX;
+    int j = INT_MAX;
+    for (int z = 0; z < numsSize; z++) {
+        int k = nums[z];
+        if (k > j) return true;
+        if (k < i) i = k;
+        if (k > i && k < j) j = k;
     }
 
     return false;
@@ -146,12 +132,12 @@ int main()
             .numsSize = 4,
             .anwser = false,
         },
-        /* { */
-        /*     .name = "Example Big Test", */
-        /*     .nums = (int*)bigTest, */
-        /*     .numsSize = sizeof(bigTest) / sizeof(bigTest[0]), */
-        /*     .anwser = true, */
-        /* }, */
+        {
+            .name = "Example Big Test",
+            .nums = (int*)bigTest,
+            .numsSize = sizeof(bigTest) / sizeof(bigTest[0]),
+            .anwser = true,
+        },
     };
 
     int testsCount = sizeof(tests) / sizeof(struct test);
