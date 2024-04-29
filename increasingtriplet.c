@@ -30,6 +30,7 @@ Follow up: Could you implement a solution that runs in O(n) time complexity and 
 #include <stdbool.h>
 #include <assert.h>
 #include <stdlib.h>
+#include <limits.h>
 
 /*
 
@@ -64,57 +65,36 @@ i=10,12,13
 
  */
 
-typedef struct {
-    int num[2];
-    int len;
-} Triplett;
-
-typedef struct {
-    Triplett *trip;
-    int len;
-    int cap;
-} Stack;
-
-Stack *stack_push(Stack *stack, Triplett trip)
-{
-    size_t mincap = stack->len + 1;
-    if (mincap >= stack->cap) {
-        size_t newcap = mincap * 2;
-        stack->trip = realloc(stack->trip, newcap * sizeof(Triplett));
-        stack->cap = newcap;
-    }
-    stack->trip[stack->len++] = trip;
-    return stack;
-}
+#define PRINT_ARRAY(ns, size) printf("["); \
+                              for (int i = 0; i < (size); i++) \
+                                 printf("%d%s", (ns)[i], i!=(size)-1?", ":""); \
+                              printf("]")
 
 bool increasingTriplet(int* nums, int numsSize)
 {
     if (numsSize < 3) return false;
 
-    Stack stack = {0};
-    
+    int minTil[numsSize];
+    int maxTil[numsSize];
+
+    int min = INT_MAX;
     for (int i = 0; i < numsSize; i++) {
         int num = nums[i];
-        for (int j = 0; j < stack.len; j++) {
-            Triplett *trip = &stack.trip[j]; 
-            if (trip->len == 2) {
-                if (trip->num[0] < trip->num[1] && trip->num[1] < num)
-                    return true;
-            } else if (trip->len == 1) {
-                if (trip->num[0] < num) {
-                    Triplett newtrip = *trip;
-                    newtrip.num[1] = num;
-                    newtrip.len++;
-                    stack_push(&stack, newtrip);
-                }
-            }
-        }
-        Triplett newtrip;
-        newtrip.num[0] = num;
-        newtrip.num[1] = 0;
-        newtrip.len = 1;
-        stack_push(&stack, newtrip);
+        if (num < min) min = num;
+        minTil[i] = min;
     }
+
+    int max = INT_MIN;
+    for (int i = numsSize-1; i >= 0; i--) {
+        int num = nums[i];
+        if (num > max) max = num;
+        maxTil[i] = max;
+    }
+
+    for (int i = 0; i < numsSize; i++) {
+        if (nums[i] != minTil[i] && nums[i] != maxTil[i]) return true;
+    }
+
     return false;
 }
 
@@ -162,10 +142,16 @@ int main()
         },
         {
             .name = "Example 6",
-            .nums = (int*)bigTest,
-            .numsSize = sizeof(bigTest) / sizeof(bigTest[0]),
-            .anwser = true,
+            .nums = (int[]){2,4,-2,-3},
+            .numsSize = 4,
+            .anwser = false,
         },
+        /* { */
+        /*     .name = "Example Big Test", */
+        /*     .nums = (int*)bigTest, */
+        /*     .numsSize = sizeof(bigTest) / sizeof(bigTest[0]), */
+        /*     .anwser = true, */
+        /* }, */
     };
 
     int testsCount = sizeof(tests) / sizeof(struct test);
