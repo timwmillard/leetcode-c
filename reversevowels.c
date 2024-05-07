@@ -18,7 +18,7 @@ char *reverseVowels(const char *s) {
 
     size_t len = strlen(s);
 
-    char *result = malloc(sizeof(char) * len + sizeof(char));
+    char *result = malloc(sizeof(char) * (len + 1));
     strncpy(result, s, len + 1);
 
     char *first = result;

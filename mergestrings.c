@@ -8,7 +8,7 @@ char *mergeAlternately(char *word1, char *word2)
     size_t word1_len = strlen(word1);
     size_t word2_len = strlen(word2);
     size_t len = word1_len + word2_len;
-    char *result = malloc(sizeof(char) * len + 1);
+    char *result = malloc(sizeof(char) * (len + 1));
 
     int i = 0;
     int i1 = 0;
